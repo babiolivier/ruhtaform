@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitetura de Identidade · Ruhta</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --purple: #2D1B69;
+  --purple-soft: #4A3590;
+  --orange: #D97A45;
+  --blue: #8FB4D9;
+  --cream: #FAF7F1;
+  --ink: #2A2534;
+  --line: #E4DDD0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:0;
+}
+
+.wrap{
+  width:100%;
+  max-width:560px;
+  min-height:100vh;
+  background:#fff;
+  box-shadow:0 0 40px rgba(45,27,105,0.08);
+  display:flex;
+  flex-direction:column;
+}
+
+.top{
+  background:var(--purple);
+  color:#fff;
+  padding:32px 28px 24px;
+}
+
+.top .brand{
+  font-family:'Fraunces',serif;
+  font-size:15px;
+  letter-spacing:0.14em;
+  color:var(--blue);
+  text-transform:lowercase;
+}
+
+.top h1{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:22px;
+  margin-top:10px;
+  line-height:1.3;
+}
+
+.progress{
+  display:flex;
+  gap:6px;
+  margin-top:20px;
+}
+.progress span{
+  height:3px;
+  flex:1;
+  background:rgba(255,255,255,0.2);
+  border-radius:2px;
+  transition:background 0.3s;
+}
+.progress span.done{background:var(--orange);}
+
+.content{
+  padding:28px;
+  flex:1;
+}
+
+.step{display:none;}
+.step.active{display:block;}
+
+.step-label{
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--purple-soft);
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.step-title{
+  font-family:'Fraunces',serif;
+  font-size:19px;
+  font-weight:500;
+  margin-bottom:8px;
+  color:var(--purple);
+}
+
+.step-hint{
+  font-size:14px;
+  color:#77706D;
+  margin-bottom:24px;
+  line-height:1.5;
+}
+
+label.field{
+  display:block;
+  margin-bottom:18px;
+}
+
+label.field span{
+  display:block;
+  font-size:13px;
+  font-weight:500;
+  margin-bottom:6px;
+  color:var(--ink);
+}
+
+input[type=text], input[type=date], input[type=time], select{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  font-size:15px;
+  font-family:'Inter',sans-serif;
+  background:#fff;
+  color:var(--ink);
+}
+input:focus, select:focus{
+  outline:none;
+  border-color:var(--orange);
+}
+
+.checkbox-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:-8px;
+  margin-bottom:18px;
+  font-size:13px;
+  color:#77706D;
+}
+.checkbox-row input{width:auto;}
+
+.group-title{
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--orange);
+  margin:22px 0 10px;
+}
+.group-title:first-of-type{margin-top:0;}
+
+.option-card{
+  display:block;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:border-color 0.2s, background 0.2s;
+  font-size:14px;
+  line-height:1.5;
+  position:relative;
+}
+.option-card:hover{border-color:var(--blue);}
+.option-card.selected{
+  border-color:var(--orange);
+  background:#FDF6F1;
+}
+.option-card input{
+  position:absolute;
+  opacity:0;
+}
+.option-card .tag{
+  display:none;
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:18px;height:18px;
+  border-radius:50%;
+  background:var(--orange);
+}
+.option-card.selected .tag{display:block;}
+
+.rank-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px 16px;
+  margin-bottom:10px;
+  font-size:13.5px;
+  line-height:1.5;
+}
+.rank-item select{
+  width:64px;
+  flex-shrink:0;
+  padding:8px 6px;
+  text-align:center;
+}
+.rank-item.filled{border-color:var(--blue);background:#F7FAFC;}
+
+.nav{
+  display:flex;
+  gap:12px;
+  padding:20px 28px 28px;
+  border-top:1px solid var(--line);
+}
+
+button.btn{
+  flex:1;
+  padding:14px;
+  border-radius:8px;
+  border:none;
+  font-family:'Inter',sans-serif;
+  font-weight:600;
+  font-size:14.5px;
+  cursor:pointer;
+  transition:opacity 0.2s;
+}
+button.btn:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-primary{background:var(--purple);color:#fff;}
+.btn-primary:hover:not(:disabled){background:var(--purple-soft);}
+.btn-ghost{background:none;color:var(--purple);border:1px solid var(--line);flex:0 0 100px;}
+
+.error{
+  font-size:12.5px;
+  color:#C4573B;
+  margin-top:-10px;
+  margin-bottom:14px;
+  display:none;
+}
+.error.show{display:block;}
+
+.result-box{
+  background:var(--cream);
+  border-radius:12px;
+  padding:20px;
+  font-size:13px;
+  white-space:pre-wrap;
+  line-height:1.6;
+  border:1px solid var(--line);
+  margin-bottom:16px;
+  font-family:'Inter',monospace;
+  max-height:340px;
+  overflow-y:auto;
+}
+
+.confirm-icon{
+  width:44px;height:44px;
+  border-radius:50%;
+  background:var(--purple);
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;
+  font-size:20px;
+  margin-bottom:18px;
+}
+
+.copied-msg{
+  font-size:12.5px;
+  color:var(--purple-soft);
+  text-align:center;
+  margin-top:8px;
+  height:16px;
+}
+
+.send-status{
+  font-size:13px;
+  text-align:center;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:12px;
+  background:#F1F5F0;
+  color:#4A6B4D;
+}
+.send-status.error{
+  background:#FBEEEA;
+  color:#C4573B;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top">
+    <div class="brand">ruhta</div>
+    <h1>Arquitetura de Identidade</h1>
+    <div class="progress">
+      <span class="bar done"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- STEP 1 -->
+    <div class="step active" data-step="1">
+      <div class="step-label">Parte 1 de 4</div>
+      <div class="step-title">Seus dados</div>
+      <div class="step-hint">Esses dados alimentam a leitura completa do seu mapa. Preencha exatamente como constam no seu registro de nascimento.</div>
+
+      <label class="field">
+        <span>Nome completo</span>
+        <input type="text" id="nome" placeholder="Como está no registro de nascimento">
+      </label>
+
+      <label class="field">
+        <span>Data de nascimento</span>
+        <input type="date" id="dataNasc">
+      </label>
+
+      <label class="field">
+        <span>Horário de nascimento</span>
+        <input type="time" id="horaNasc">
+      </label>
+      <div class="checkbox-row">
+        <input type="checkbox" id="naoSeiHora">
+        <label for="naoSeiHora">Não sei o horário exato</label>
+      </div>
+
+      <label class="field">
+        <span>Cidade e país onde nasceu</span>
+        <input type="text" id="cidadeNasc" placeholder="Ex: São Paulo, Brasil">
+      </label>
+
+      <label class="field">
+        <span>Gênero</span>
+        <select id="genero">
+          <option value="">Selecione</option>
+          <option value="feminino">Feminino</option>
+          <option value="masculino">Masculino</option>
+          <option value="outro">Prefiro descrever</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Palavra de poder (a que mais representa o que você valoriza)</span>
+        <input type="text" id="palavraPoder" placeholder="Uma palavra">
+      </label>
+      <div class="error" id="err1">Preencha nome, data de nascimento e cidade para continuar.</div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" data-step="2">
+      <div class="step-label">Parte 2 de 4</div>
+      <div class="step-title">Escolha uma frase de cada grupo</div>
+      <div class="step-hint">Não existe resposta certa. Escolha a frase que mais soa como você, mesmo que nenhuma seja perfeita.</div>
+
+      <div class="group-title">1º grupo — escolha uma frase</div>
+      <div id="grupoA"></div>
+      <div class="group-title">2º grupo — escolha outra frase</div>
+      <div id="grupoB"></div>
+      <div class="error" id="err2">Escolha uma frase de cada grupo para continuar.</div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" data-step="3">
+      <div class="step-label">Parte 3 de 4</div>
+      <div class="step-title">Ordene as três que mais se parecem com você</div>
+      <div class="step-hint">Marque "1º" na frase que mais te representa, "2º" na intermediária e "3º" na terceira. As demais ficam sem marcação.</div>
+      <div id="grupoC"></div>
+      <div class="error" id="err3">Marque exatamente uma frase como 1º, uma como 2º e uma como 3º.</div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" data-step="4">
+      <div class="step-label">Parte 4 de 4</div>
+      <div class="step-title">Pronto</div>
+      <div class="confirm-icon">✓</div>
+      <div class="step-hint">Aqui está o resumo do que foi preenchido. Copie e envie para quem está conduzindo sua jornada.</div>
+      <div class="result-box" id="resultBox"></div>
+      <div class="send-status" id="sendStatus">Enviando resultado...</div>
+      <button class="btn btn-primary" onclick="copiarResultado()" style="width:100%">Copiar resultado</button>
+      <div class="copied-msg" id="copiedMsg"></div>
+    </div>
+
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-ghost" id="btnBack" onclick="voltar()" style="display:none">Voltar</button>
+    <button class="btn btn-primary" id="btnNext" onclick="avancar()">Continuar</button>
+  </div>
+</div>
+
+<script>
+// Cole aqui a URL gerada depois de implantar o Google Apps Script como Web App.
+// Enquanto estiver vazia, o envio automático fica desativado e só o botão de copiar funciona.
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyOMtq7GJjOqHUicIDZlsOcku56Yi8Od59BgFoNAQw13pw4PykLjlq7dQi1QzuksV61/exec";
+
+const grupoAFrases = [
+  {v:1, t:"Todos os meus atos têm por finalidade ajudar as pessoas e me dedicar a melhorar o mundo. Fico muito triste quando não atendo as expectativas e não sou reconhecido pelo que faço. Sempre faço o melhor de mim com a intenção de ajudar e muitas vezes não sou bem compreendido."},
+  {v:2, t:"Gosto quando as pessoas são diretas comigo. Não suporto mentiras e traições. Também não tenho paciência com pessoas que ficam enrolando com os assuntos importantes de suas vidas. Tenho um grande senso de justiça, muita energia e entendo que o poder deve ser usado positivamente para mudar o mundo."},
+  {v:3, t:"Não gosto muito de aparecer e prefiro cuidar de mim e das pessoas que precisam de mim. Prefiro um ambiente solidário, onde as pessoas são amigas, em vez de lugares competitivos e cheios de falsidade. Idealizo um mundo onde as pessoas são felizes e unidas."}
+];
+
+const grupoBFrases = [
+  {v:4, t:"Sou uma pessoa muito transparente e todos sabem quando não gosto de alguma coisa. Não gosto de ter chefes, pois sei muito bem o que devo fazer e preciso ter autonomia. Muitas vezes passo uma imagem de força, mesmo tendo minhas fragilidades."},
+  {v:5, t:"Sou bastante racional e organizado e gosto de fazer o melhor, de preferência, sem a ajuda de outras pessoas, pois elas iriam me atrapalhar. Não sou uma pessoa muito afetiva e próxima das outras, talvez porque não saiba como me aproximar e porque as pessoas poderiam me julgar de forma errada."},
+  {v:6, t:"Sou muito otimista e entendo que as coisas sempre vão dar certo no final. Gosto de pessoas e de fazer as coisas juntos, porque assim tudo é mais divertido e com afeto. Faço tudo com alegria e às vezes tenho muitas atividades ao mesmo tempo."}
+];
+
+const grupoCFrases = [
+  {tipo:1, t:"Estarei em um bom caminho se fizer o que é certo e se ensinar as pessoas a fazerem o que é certo também. Entendo isso como uma missão."},
+  {tipo:2, t:"Estarei em um bom caminho se for amado pelos meus amigos e familiares e estiver perto deles. Quero muito ajudá-los no que eu puder."},
+  {tipo:3, t:"Estarei em um bom caminho se for respeitado e admirado pelos outros. Ter um bom desempenho e me destacar é algo importante para mim."},
+  {tipo:4, t:"Estarei em um bom caminho se conseguir descobrir minha identidade e como me posiciono. Quero descobrir minha importância no mundo."},
+  {tipo:5, t:"Estarei em um bom caminho se conseguir entender como as coisas funcionam. Gosto de mergulhar fundo nos problemas e desvendá-los."},
+  {tipo:6, t:"Estarei em um bom caminho se fizer aquilo que esperam que eu faça. Gosto do apoio dos meus amigos na tomada de decisões."},
+  {tipo:7, t:"Estarei em um bom caminho se conseguir viver intensamente e explorar todas as possibilidades. A vida com diversão e aventura é sempre melhor."},
+  {tipo:8, t:"Estarei em um bom caminho se conseguir dominar as situações e escolher o meu caminho. Não suporto injustiças e falsidade."},
+  {tipo:9, t:"Estarei em um bom caminho se conseguir manter um ambiente de paz e equilíbrio. Adoro ajudar as pessoas e resolver os seus conflitos."}
+];
+
+const mapaTipo = {
+  "1-5":1, "1-6":2, "2-5":3, "3-4":4, "3-5":5, "1-4":6, "2-6":7, "2-4":8, "3-6":9
+};
+
+let state = { grupoA:null, grupoB:null, ranking:{} };
+let currentStep = 1;
+
+function renderOptions(containerId, frases, name, groupKey){
+  const el = document.getElementById(containerId);
+  el.innerHTML = frases.map(f => `
+    <label class="option-card" data-val="${f.v}">
+      <input type="radio" name="${name}" value="${f.v}" onchange="selectOption('${groupKey}', ${f.v}, this)">
+      <div class="tag"></div>
+      ${f.t}
+    </label>
+  `).join('');
+}
+
+function selectOption(groupKey, val, inputEl){
+  state[groupKey] = val;
+  const container = inputEl.closest('.content').querySelectorAll(`[name="${inputEl.name}"]`);
+  container.forEach(inp => inp.closest('.option-card').classList.remove('selected'));
+  inputEl.closest('.option-card').classList.add('selected');
+}
+
+function renderRanking(){
+  const el = document.getElementById('grupoC');
+  el.innerHTML = grupoCFrases.map((f,i) => `
+    <div class="rank-item" id="rankItem${i}">
+      <select onchange="setRank(${i}, this.value)">
+        <option value="">–</option>
+        <option value="1">1º</option>
+        <option value="2">2º</option>
+        <option value="3">3º</option>
+      </select>
+      <div>${f.t}</div>
+    </div>
+  `).join('');
+}
+
+function setRank(idx, value){
+  const item = document.getElementById('rankItem'+idx);
+  // clear this frase's previous rank if any, then reassign
+  Object.keys(state.ranking).forEach(k => { if(state.ranking[k] === idx) delete state.ranking[k]; });
+  if(value){
+    // if that rank was already used by another frase, clear it there
+    Object.keys(state.ranking).forEach(k => { if(k === value) delete state.ranking[k]; });
+    state.ranking[value] = idx;
+    item.classList.add('filled');
+  } else {
+    item.classList.remove('filled');
+  }
+  // re-sync select UI in case a rank got reassigned elsewhere
+  document.querySelectorAll('.rank-item select').forEach((sel, i2) => {
+    let assigned = '';
+    Object.keys(state.ranking).forEach(k => { if(state.ranking[k] === i2) assigned = k; });
+    sel.value = assigned;
+    document.getElementById('rankItem'+i2).classList.toggle('filled', !!assigned);
+  });
+}
+
+document.getElementById('naoSeiHora').addEventListener('change', function(){
+  document.getElementById('horaNasc').disabled = this.checked;
+  if(this.checked) document.getElementById('horaNasc').value = '';
+});
+
+renderOptions('grupoA', grupoAFrases, 'grupoA', 'grupoA');
+renderOptions('grupoB', grupoBFrases, 'grupoB', 'grupoB');
+renderRanking();
+
+function updateProgress(){
+  document.querySelectorAll('.progress .bar').forEach((b,i) => {
+    b.classList.toggle('done', i < currentStep);
+  });
+}
+
+function showStep(n){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+  document.getElementById('btnBack').style.display = n === 1 ? 'none' : 'block';
+  document.getElementById('btnNext').textContent = n === 4 ? 'Concluir' : (n===3 ? 'Ver resultado' : 'Continuar');
+  if(n === 4) document.getElementById('btnNext').style.display = 'none'; else document.getElementById('btnNext').style.display = 'block';
+  updateProgress();
+}
+
+function avancar(){
+  if(currentStep === 1){
+    const nome = document.getElementById('nome').value.trim();
+    const data = document.getElementById('dataNasc').value;
+    const cidade = document.getElementById('cidadeNasc').value.trim();
+    if(!nome || !data || !cidade){
+      document.getElementById('err1').classList.add('show');
+      return;
+    }
+    document.getElementById('err1').classList.remove('show');
+  }
+  if(currentStep === 2){
+    const err2 = document.getElementById('err2');
+    if(!state.grupoA && !state.grupoB){
+      err2.textContent = 'Falta escolher uma frase no 1º grupo e uma no 2º grupo.';
+      err2.classList.add('show');
+      return;
+    }
+    if(!state.grupoA){
+      err2.textContent = 'Falta escolher uma frase no 1º grupo.';
+      err2.classList.add('show');
+      return;
+    }
+    if(!state.grupoB){
+      err2.textContent = 'Falta escolher uma frase no 2º grupo.';
+      err2.classList.add('show');
+      return;
+    }
+    err2.classList.remove('show');
+  }
+  if(currentStep === 3){
+    if(!state.ranking['1'] || !state.ranking['2'] || !state.ranking['3']){
+      document.getElementById('err3').classList.add('show');
+      return;
+    }
+    document.getElementById('err3').classList.remove('show');
+    montarResultado();
+  }
+  currentStep++;
+  showStep(currentStep);
+}
+
+function voltar(){
+  currentStep--;
+  showStep(currentStep);
+}
+
+function montarResultado(){
+  const nome = document.getElementById('nome').value.trim();
+  const dataNasc = document.getElementById('dataNasc').value;
+  const naoSeiHora = document.getElementById('naoSeiHora').checked;
+  const horaNasc = naoSeiHora ? 'não informado' : document.getElementById('horaNasc').value;
+  const cidade = document.getElementById('cidadeNasc').value.trim();
+  const generoSel = document.getElementById('genero');
+  const genero = generoSel.options[generoSel.selectedIndex]?.text || '';
+  const palavraPoder = document.getElementById('palavraPoder').value.trim();
+
+  const tipoResult = mapaTipo[`${state.grupoA}-${state.grupoB}`] || 'não identificado';
+
+  const tipo1 = grupoCFrases[state.ranking['1']].tipo;
+  const tipo2 = grupoCFrases[state.ranking['2']].tipo;
+  const tipo3 = grupoCFrases[state.ranking['3']].tipo;
+
+  const texto = `ARQUITETURA DE IDENTIDADE — RESULTADO DO FORMULÁRIO
+
+DADOS PESSOAIS
+Nome: ${nome}
+Data de nascimento: ${dataNasc}
+Horário de nascimento: ${horaNasc}
+Cidade/país de nascimento: ${cidade}
+Gênero: ${genero}
+Palavra de poder: ${palavraPoder}
+
+ENEAGRAMA
+Tipo principal (calculado): ${tipoResult}
+Três tipos de maior intensidade, em ordem: ${tipo1}, ${tipo2}, ${tipo3}
+
+Observação: o tipo principal já sai calculado. Os dois tipos secundários para o relatório Ninho são os dois primeiros da lista de intensidade acima, quando diferentes do tipo principal.`;
+
+  document.getElementById('resultBox').textContent = texto;
+  window._resultadoTexto = texto;
+
+  const payload = {
+    nome, dataNasc, horaNasc, cidade, genero, palavraPoder,
+    tipoPrincipal: tipoResult,
+    tipoIntensidade1: tipo1,
+    tipoIntensidade2: tipo2,
+    tipoIntensidade3: tipo3
+  };
+
+  enviarResultado(payload);
+}
+
+function enviarResultado(payload){
+  const status = document.getElementById('sendStatus');
+
+  if(!WEB_APP_URL){
+    status.textContent = 'Envio automático não configurado. Use o botão para copiar e enviar manualmente.';
+    status.classList.add('error');
+    return;
+  }
+
+  status.textContent = 'Enviando resultado...';
+  status.classList.remove('error');
+
+  fetch(WEB_APP_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    status.textContent = 'Resultado enviado.';
+    status.classList.remove('error');
+  }).catch(() => {
+    status.textContent = 'Não foi possível enviar automaticamente. Copie o resultado abaixo e envie manualmente.';
+    status.classList.add('error');
+  });
+}
+
+function copiarResultado(){
+  navigator.clipboard.writeText(window._resultadoTexto || '').then(() => {
+    const msg = document.getElementById('copiedMsg');
+    msg.textContent = 'Copiado.';
+    setTimeout(() => msg.textContent = '', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
