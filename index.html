@@ -377,7 +377,7 @@ button.btn:disabled{opacity:0.35;cursor:not-allowed;}
       <div class="step-label">Parte 4 de 4</div>
       <div class="step-title">Pronto</div>
       <div class="confirm-icon">✓</div>
-      <div class="step-hint">Aqui está o resumo do que foi preenchido. Copie e envie para quem está conduzindo sua jornada.</div>
+      <div class="step-hint">Aqui está o resumo do que foi preenchido. Esse é o primeiro passo para um relatório especial a ser gerado.</div>
       <div class="result-box" id="resultBox"></div>
       <div class="send-status" id="sendStatus">Enviando resultado...</div>
       <button class="btn btn-primary" onclick="copiarResultado()" style="width:100%">Copiar resultado</button>
@@ -583,7 +583,7 @@ ENEAGRAMA
 Tipo principal (calculado): ${tipoResult}
 Três tipos de maior intensidade, em ordem: ${tipo1}, ${tipo2}, ${tipo3}
 
-Observação: o tipo principal já sai calculado. Os dois tipos secundários para o relatório Ninho são os dois primeiros da lista de intensidade acima, quando diferentes do tipo principal.`;
+Observação: sabemos que são muitos dados, mas ao integrarmos, tudo faz sentido.`;
 
   document.getElementById('resultBox').textContent = texto;
   window._resultadoTexto = texto;
