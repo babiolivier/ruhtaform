@@ -537,7 +537,7 @@ function avancar(){
     err2.classList.remove('show');
   }
   if(currentStep === 3){
-    if(!state.ranking['1'] || !state.ranking['2'] || !state.ranking['3']){
+    if(state.ranking['1'] === undefined || state.ranking['2'] === undefined || state.ranking['3'] === undefined){
       document.getElementById('err3').classList.add('show');
       return;
     }
