@@ -829,7 +829,7 @@ function montarResultado(){
   const cidadeNasc = document.getElementById('cidadeNasc').value.trim();
   const estadoNasc = document.getElementById('estadoNasc').value.trim();
   const paisNasc = document.getElementById('paisNasc').value.trim();
-  const cidade = [cidadeNasc, estadoNasc, paisNasc].filter(Boolean).join(', ');
+  const cidadeExibicao = [cidadeNasc, estadoNasc, paisNasc].filter(Boolean).join(', ');
   const generoSel = document.getElementById('genero');
   const genero = generoSel.options[generoSel.selectedIndex]?.text || '';
   const palavraPoder = document.getElementById('palavraPoder').value.trim();
@@ -850,7 +850,7 @@ E-mail: ${email}
 WhatsApp: ${whatsapp}
 Data de nascimento: ${dataNasc}
 Horário de nascimento: ${horaNasc}
-Cidade/país de nascimento: ${cidade}
+Cidade/país de nascimento: ${cidadeExibicao}
 Gênero: ${genero}
 Palavra de poder: ${palavraPoder}
  
@@ -870,7 +870,9 @@ Observação: sabemos que são muitos dados, mas ao integrarmos, tudo faz sentid
   window._resultadoTexto = texto;
  
   const payload = {
-    nome, email, whatsapp, dataNasc, horaNasc, cidade, genero, palavraPoder,
+    nome, email, whatsapp, dataNasc, horaNasc,
+    cidade: cidadeNasc, estado: estadoNasc, pais: paisNasc,
+    genero, palavraPoder,
     tipoPrincipal: tipoResult,
     tipoIntensidade1: tipo1,
     tipoIntensidade2: tipo2,
